@@ -15,6 +15,11 @@ Jasmine for testing
 ```
 - /api/resizeImage?filename=map&width=400&height=400
 ```
+## API Format accessing cache
+
+```
+- /api/cache
+```
 
 ### Start the server
 
