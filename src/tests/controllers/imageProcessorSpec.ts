@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import app from '../..';
-
+import { resizeImage } from '../../controllers/imageProcessor';
 const request = supertest(app);
 describe('Test Middleware', () => {
   it('should return an error when width is not a number', async (done) => {
@@ -19,7 +19,7 @@ describe('Test Middleware', () => {
   });
   it('should return an error when parameter is missing', async (done) => {
     const response = await request.get('/api/resizeImage');
-    expect(response.text).toBe('Invalid Parameter(s)');
+    expect(response.text).toBe('Missing Parameter(s)');
     done();
   });
   it('should return an error when width is not a number', async (done) => {
@@ -28,6 +28,14 @@ describe('Test Middleware', () => {
     );
     expect(response.text).toBe("image doesn't exist");
     expect(response.status).toBe(400);
+    done();
+  });
+});
+describe('Test image processor function', async () => {
+  it('Should not throw an error when resize image is called', async (done) => {
+    expect(async () => {
+      await resizeImage('map.png', 100, 100, 'map');
+    }).not.toThrow();
     done();
   });
 });
