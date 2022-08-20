@@ -46,4 +46,10 @@ describe('Test image processor function', () => __awaiter(void 0, void 0, void 0
         })).not.toThrow();
         done();
     }));
+    it('Should return image is already processed', (done) => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield request.get('/api/resizeImage?filename=map&width=310&height=200');
+        expect(response.text).toBe('Image is already processed');
+        expect(response.status).toBe(400);
+        done();
+    }));
 }));

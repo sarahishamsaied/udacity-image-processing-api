@@ -8,4 +8,5 @@ const imageProcessor_1 = require("../controllers/imageProcessor");
 const validateParams_1 = __importDefault(require("../middleware/validateParams"));
 const router = express_1.default.Router();
 router.get('/api/resizeImage', validateParams_1.default, imageProcessor_1.processImage);
+router.get('/api/cache', imageProcessor_1.cashedPaths);
 exports.default = router;

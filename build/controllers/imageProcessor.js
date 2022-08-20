@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.processImage = exports.readThumbnailPaths = exports.resizeImage = void 0;
+exports.processImage = exports.cashedPaths = exports.resizeImage = void 0;
 const sharp_1 = __importDefault(require("sharp"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
@@ -29,7 +29,6 @@ const resizeImage = (imgPath, w, h, f) => __awaiter(void 0, void 0, void 0, func
     }
     catch (err) {
         console.log('Invalid parameters');
-        console.log(err);
     }
 });
 exports.resizeImage = resizeImage;
@@ -43,7 +42,13 @@ const processImage = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             root: path_1.default.join('./output'),
         };
         const imgPath = `${f}.png`;
+        const resizedImg = `resized-${f}${w}x${h}.png`;
         const imageExists = yield fileExisits(path_1.default.join('./images', imgPath));
+        const resizedImgExists = yield fileExisits(path_1.default.join('./output', resizedImg));
+        if (resizedImgExists) {
+            res.status(400).send('Image is already processed');
+            return;
+        }
         if (imageExists) {
             yield (0, exports.resizeImage)(imgPath, w, h, f);
             res.status(200).sendFile(`resized-${f}${w}x${h}.png`, options, (err) => {
@@ -61,14 +66,14 @@ const processImage = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.processImage = processImage;
-const readThumbnailPaths = (req, res) => {
+const cashedPaths = (req, res) => {
     const directory = 'output';
     const data = fs_1.default.readdirSync(directory);
-    const thumbnails = data.map((d) => {
+    const cache = data.map((d) => {
         return `http://localhost:3000/${d}`;
     });
     res.status(200).send({
-        thumbnails,
+        cache,
     });
 };
-exports.readThumbnailPaths = readThumbnailPaths;
+exports.cashedPaths = cashedPaths;

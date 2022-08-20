@@ -31,7 +31,15 @@ const processImage = async (req: Request, res: Response): Promise<void> => {
       root: path.join('./output'),
     };
     const imgPath = `${f}.png`;
+    const resizedImg = `resized-${f}${w}x${h}.png`;
     const imageExists = await fileExisits(path.join('./images', imgPath));
+    const resizedImgExists = await fileExisits(
+      path.join('./output', resizedImg)
+    );
+    if (resizedImgExists) {
+      res.status(400).send('Image is already processed');
+      return;
+    }
     if (imageExists) {
       await resizeImage(imgPath, w as number, h as number, f);
       res.status(200).sendFile(`resized-${f}${w}x${h}.png`, options, (err) => {
